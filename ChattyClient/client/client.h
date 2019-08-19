@@ -18,4 +18,3 @@ namespace Chatty {
 		void workerThread(Shared<ios> ios);
 	};
 }
-

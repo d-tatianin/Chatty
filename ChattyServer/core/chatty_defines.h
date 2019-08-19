@@ -6,3 +6,5 @@
 #else
 	#define CLEAR_SCREEN printf("\033c");
 #endif
+
+#define CHATTY_BUFFER_SIZE (1024 * 10) // 10KB

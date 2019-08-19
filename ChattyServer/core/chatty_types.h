@@ -23,6 +23,10 @@ namespace Chatty {
 		thread_pool;
 	typedef boost::system::error_code
 		error_code;
+	typedef boost::asio::streambuf
+		buffer;
+	typedef boost::asio::mutable_buffer
+		mutable_buffer;
 	
 	template<typename T>
 	using Shared = typename std::shared_ptr<T>;

@@ -122,10 +122,12 @@
     <ClInclude Include="core\chatty_types.h" />
     <ClInclude Include="core\chatty_defines.h" />
     <ClInclude Include="core\chatty_utils.h" />
+    <ClInclude Include="core\decoder\decoder.h" />
     <ClInclude Include="server\client.h" />
     <ClInclude Include="server\server.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="core\decoder\decoder.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="server\client.cpp" />
     <ClCompile Include="server\server.cpp" />

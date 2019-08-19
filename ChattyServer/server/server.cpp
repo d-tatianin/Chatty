@@ -49,14 +49,33 @@ namespace Chatty {
 
 	void server::on_accepted(const error_code& ec)
 	{
+		static uint32_t unique_id = 0;
+
 		if (m_Running)
 		{
 			std::cout << "A new client has just joined the server!" << std::endl;
 
-			m_ActiveClients.emplace_back(std::move(m_Socket));
+			m_ActiveClients.emplace_back(std::move(m_Socket), ++unique_id);
 
 			if (m_Running)
 				m_SharedIOS->post(std::bind(&server::accept_clients, this));
+		}
+	}
+
+	bool server::decode_and_process(const std::istream& message_stream)
+	{
+		decoder decoded(message_stream);
+
+		switch (decoded.packet_type())
+		{
+		case packet_type::BAD_PACKET:
+			return false;
+		case packet_type::BEGIN_SESSION:
+			return true;
+		case packet_type::CHAT_MESSAGE:
+			return true;
+		default:
+			return true;
 		}
 	}
 

@@ -30,6 +30,9 @@
     <ClInclude Include="core\chatty_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\decoder\decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="server\client.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\decoder\decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

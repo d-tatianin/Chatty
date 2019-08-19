@@ -7,6 +7,8 @@
 #include <boost/thread.hpp>
 
 #include "core/chatty_types.h"
+#include "core/decoder/decoder.h"
+
 #include "client.h"
 
 namespace Chatty {
@@ -30,9 +32,9 @@ namespace Chatty {
 		void accept_clients();
 		void on_accepted(const error_code& ec);
 
+		bool decode_and_process(const std::istream& message_stream);
+
 		void workerThread(Shared<ios> ios);
 	};
 
 }
-
-
