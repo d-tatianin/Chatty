@@ -7,32 +7,56 @@
 
 namespace Chatty {
 
-	class client
-	{
-	private:
-		socket         m_Socket;
-		uint32_t       m_ID;
-		std::string    m_Name;
-		buffer         m_Buffer;
-		mutable_buffer m_MutableBuffer;
-		bool           m_ActiveSession;
-		uint32_t       m_TalkingTo;
-	public:
-		client(socket&& client_socket, uint32_t id);
-		void read();
-		void on_read(const error_code& ec, size_t bytesTransferred);
-		void reply(const error_code& ec);
+    class client
+    {
+    private:
+        Shared<ios>     m_IOS;
+        socket          m_Socket;
+        uint32_t        m_ID;
+        string          m_Name;
+        buffer          m_ReadBuffer;
+        buffer          m_WriteBuffer;
+        bool            m_ActiveSession;
+        string          m_TalkingToName;
+        uint32_t        m_TalkingTo;
 
-		const std::string& name() { return m_Name; }
-		void set_name(const std::string& name) { m_Name = name; }
+        forward_handler      m_ForwardMessage;
+        resolve_id_handler   m_ResolveID;
+        init_session_handler m_InitSession;
+        init_session_reply_handler m_ReplyWith;
+    public:
+        client(
+            Shared<ios> ios, 
+            socket&& client_socket, 
+            uint32_t id, 
+            forward_handler handler_forward,
+            resolve_id_handler handler_resolve,
+            init_session_handler handler_init,
+            init_session_reply_handler handler_reply
+        );
 
-		bool is_in_session() { return m_ActiveSession; }
-		void enable_session() { m_ActiveSession = true; }
-		void disable_session() { m_ActiveSession = false; }
+        void read();
+        void on_read(const error_code& ec, size_t bytesTransferred);
 
-		uint32_t chatter() { return m_TalkingTo; }
-		void set_chatter(uint32_t id) { m_TalkingTo = id; }
+        void send_to(string&& message);
+        void on_sent(const error_code& ec);
 
-		uint32_t id() { return m_ID; }
-	};
+        void request_session(uint32_t from);
+        void on_session_requested(const error_code& ec);
+
+        void session_reply(packet_type::id reply);
+        void on_session_reply_sent(const error_code& ec);
+
+        const string& name() { return m_Name; }
+        void set_name(const string& name) { m_Name = name; }
+
+        bool is_in_session() { return m_ActiveSession; }
+        void enable_session() { m_ActiveSession = true; }
+        void disable_session() { m_ActiveSession = false; }
+
+        uint32_t chatter() { return m_TalkingTo; }
+        void set_chatter(uint32_t id) { m_TalkingTo = id; }
+
+        uint32_t id() { return m_ID; }
+    };
 }
