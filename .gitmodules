@@ -1,0 +1,3 @@
+[submodule "vendor/BLogger"]
+	path = vendor/BLogger
+	url = https://github.com/8infy/BLogger
