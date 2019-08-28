@@ -56,6 +56,7 @@ namespace Chatty {
 
         uint32_t chatter() { return m_TalkingTo; }
         void set_chatter(uint32_t id) { m_TalkingTo = id; }
+        void set_chatter_name(const string& name) { m_TalkingToName = name; }
 
         uint32_t id() { return m_ID; }
     };

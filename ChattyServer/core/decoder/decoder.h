@@ -26,7 +26,7 @@ namespace Chatty {
         packet_type::id   m_PacketType;
         std::vector<char> m_Message;
     public:
-        decoder(const std::istream& response_stream);
+        decoder(std::istream& response_stream);
         packet_type::id    packet_type() { return m_PacketType; }
         std::vector<char>& message()     { return m_Message; }
     };

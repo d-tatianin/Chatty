@@ -26,6 +26,7 @@ namespace Chatty {
     typedef boost::asio::streambuf
         buffer;
  
+    using boost::asio::async_connect;
     using boost::asio::async_write;
 
     template<typename T>

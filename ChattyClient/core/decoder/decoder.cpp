@@ -5,7 +5,7 @@ namespace Chatty {
     decoder::decoder(const std::istream& stream)
     {
         std::stringstream ss;
-        ss << &stream;
+        ss << stream.rdbuf();
         std::string packet = ss.str();
         
         if (isalnum(packet[0]))

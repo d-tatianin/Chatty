@@ -63,6 +63,8 @@ namespace Chatty {
             break;
         case packet_type::ACCEPT:
             m_ActiveSession = true;
+            m_ReplyWith(response.packet_type(), m_TalkingTo);
+            break;
         case packet_type::REJECT:
             m_ReplyWith(response.packet_type(), m_TalkingTo);
             m_TalkingTo = 0;
@@ -77,7 +79,7 @@ namespace Chatty {
         m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
         std::ostream packet(&m_WriteBuffer);
         packet << packet_type::CHAT_MESSAGE;
-        packet << message.data();
+        packet << message.data() << '\0';
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
     }
@@ -96,7 +98,7 @@ namespace Chatty {
         m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
         std::ostream packet(&m_WriteBuffer);
         packet << packet_type::BEGIN_SESSION;
-        packet << m_TalkingToName.data();
+        packet << m_TalkingToName.data() << '\0';
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_requested, this, std::placeholders::_1));
     }
@@ -114,6 +116,9 @@ namespace Chatty {
         m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
         std::ostream packet(&m_WriteBuffer);
         packet << reply;
+
+        if (reply == packet_type::ACCEPT)
+            m_ActiveSession = true;
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_reply_sent, this, std::placeholders::_1));
     }

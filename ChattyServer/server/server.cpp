@@ -120,7 +120,7 @@ namespace Chatty {
         auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == with; });
 
         recipient->set_chatter(from);
-        recipient->set_name(id_to_name(from));
+        recipient->set_chatter_name(id_to_name(from));
         recipient->request_session(from);
     }
 
