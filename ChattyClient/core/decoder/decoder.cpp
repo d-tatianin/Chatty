@@ -19,6 +19,7 @@ namespace Chatty {
         }
 
         packet.erase(0, 1);
+        packet.push_back('\0');
 
         switch (m_PacketType)
         {

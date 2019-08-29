@@ -79,7 +79,7 @@ namespace Chatty {
         m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
         std::ostream packet(&m_WriteBuffer);
         packet << packet_type::CHAT_MESSAGE;
-        packet << message.data() << '\0';
+        packet << message.data();
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
     }
@@ -98,7 +98,7 @@ namespace Chatty {
         m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
         std::ostream packet(&m_WriteBuffer);
         packet << packet_type::BEGIN_SESSION;
-        packet << m_TalkingToName.data() << '\0';
+        packet << m_TalkingToName.data();
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_requested, this, std::placeholders::_1));
     }
