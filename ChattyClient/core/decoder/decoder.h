@@ -3,6 +3,10 @@
 #include <vector>
 #include <sstream>
 
+#include "core/strings/wide_string.h"
+#include "core/strings/encoded_wide_string.h"
+#include "core/chatty_types.h"
+
 namespace Chatty {
 
     namespace packet_type {
@@ -18,16 +22,35 @@ namespace Chatty {
             CLOSE_SESSION =  6, // [6]
             OK_REPLY      =  7  // [7]
         };
+
+        inline bool validate(id num)
+        {
+            return (
+                num == USER_REGISTER ||
+                num == BEGIN_SESSION ||
+                num == ACCEPT        ||
+                num == REJECT        ||
+                num == CHAT_MESSAGE  ||
+                num == CLOSE_SESSION ||
+                num == OK_REPLY
+            );
+        }
     }
 
     class decoder
     {
     private:
-        packet_type::id   m_PacketType;
-        std::vector<char> m_Message;
+        packet_type::id m_PacketType;
+        wide_string m_Message;
     public:
-        decoder(const std::istream& response_stream);
-        packet_type::id    packet_type() { return m_PacketType; }
-        std::vector<char>& message()     { return m_Message; }
+        decoder(std::istream& response_stream);
+        packet_type::id packet_type() { return m_PacketType; }
+        wide_string& message() { return m_Message; }
+
+        static void construct_packet(
+            buffer& out_buffer, 
+            packet_type::id type, 
+            wide_string* message = nullptr
+        );
     };
 }

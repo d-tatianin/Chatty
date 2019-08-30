@@ -20,7 +20,8 @@ namespace Chatty {
         m_ID(id),
         m_ActiveSession(false),
         m_TalkingTo(0),
-        m_TalkingToName('\0'),
+        m_Name(),
+        m_TalkingToName(),
         m_ForwardMessage(handler_forward),
         m_ResolveID(handler_resolve),
         m_InitSession(handler_init),
@@ -59,7 +60,7 @@ namespace Chatty {
             break;
         case packet_type::CHAT_MESSAGE:
             if(m_ActiveSession)
-                m_ForwardMessage(std::move(response.message()), m_TalkingTo);
+                m_ForwardMessage(response.message(), m_TalkingTo);
             break;
         case packet_type::ACCEPT:
             m_ActiveSession = true;
@@ -74,12 +75,9 @@ namespace Chatty {
         m_IOS->post(std::bind(&client::read, this));
     }
 
-    void client::send_to(string&& message)
+    void client::send_to(wide_string& message)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::CHAT_MESSAGE;
-        packet << message.data();
+        decoder::construct_packet(m_WriteBuffer, packet_type::CHAT_MESSAGE, &message);
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
     }
@@ -88,17 +86,14 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Error while sending a message to the client!" << std::endl;
+            std::wcout << L"Error while sending a message to the client!" << std::endl;
             async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
         }
     }
 
     void client::request_session(uint32_t from)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::BEGIN_SESSION;
-        packet << m_TalkingToName.data();
+        decoder::construct_packet(m_WriteBuffer, packet_type::BEGIN_SESSION, &m_TalkingToName);
 
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_requested, this, std::placeholders::_1));
     }
@@ -107,15 +102,13 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Error while sending a session request to the client!" << std::endl;
+            std::wcout << L"Error while sending a session request to the client!" << std::endl;
         }
     }
 
     void client::session_reply(packet_type::id reply)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << reply;
+        decoder::construct_packet(m_WriteBuffer, reply);
 
         if (reply == packet_type::ACCEPT)
             m_ActiveSession = true;
@@ -127,7 +120,7 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Error while sending a session request reply to the client!" << std::endl;
+            std::wcout << L"Error while sending a session request reply to the client!" << std::endl;
         }
     }
 }

@@ -24,6 +24,12 @@
     <ClCompile Include="core\decoder\decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\strings\wide_string.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\strings\encoded_wide_string.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\client.h">
@@ -36,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\decoder\decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\strings\wide_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\strings\encoded_wide_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

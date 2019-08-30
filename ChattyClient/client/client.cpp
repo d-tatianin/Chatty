@@ -40,29 +40,17 @@ namespace Chatty {
                 std::placeholders::_1
             )
         );
-        //async_connect(
-        //    m_Socket,
-        //    endpoint(
-        //        boost::asio::ip::address::from_string(m_IPort.first),
-        //        atoi(m_IPort.second.c_str())
-        //    ),
-        //    std::bind(
-        //        &client::on_connected,
-        //        this,
-        //        std::placeholders::_1
-        //    )
-        //);
     }
 
     void client::on_connected(const error_code& ec)
     {
         if (ec)
         {
-            std::cout << "Could not connect to the server. Reason: " << ec.message() << std::endl;
+            std::wcout << L"Could not connect to the server. Reason: " << ec.message().c_str() << std::endl;
         }
         else
         {
-            std::cout << "Successfully connected." << std::endl;
+            std::wcout << L"Successfully connected." << std::endl;
 
             m_SharedIOS->post(
                 std::bind(
@@ -77,33 +65,32 @@ namespace Chatty {
     {
         while (m_Running)
         {
-            std::string command;
-            std::getline(std::cin, command);
+            std::wstring command;
+            std::getline(std::wcin, command);
 
-            if (command == "/shutdown")
+            if (command == L"/shutdown")
                 shutdown();
-            else if (command.find("/register") != std::string::npos)
+            else if (command.find(L"/register") != std::string::npos)
             {
-                command.erase(command.begin(), std::find(command.begin(), command.end(), ' ') + 1);
+                command.erase(command.begin(), std::find(command.begin(), command.end(), L' ') + 1);
                 registration(command);
             }
-            else if (command.find("/begin-session") != std::string::npos)
+            else if (command.find(L"/begin-session") != std::string::npos)
             {
-                command.erase(command.begin(), std::find(command.begin(), command.end(), ' ') + 1);
+                command.erase(command.begin(), std::find(command.begin(), command.end(), L' ') + 1);
                 begin_session_with(command);
             }
-            else if (command == "/accept")
+            else if (command == L"/accept")
             {
                 m_InSession = true;
                 session_accept();
             }
-            else if (command == "/reconnect")
+            else if (command == L"/reconnect")
             {
                 connect();
             }
-            else if (command == "/clear")
+            else if (command == L"/clear")
             {
-                system("cls");
             }
             else
             {
@@ -114,19 +101,20 @@ namespace Chatty {
         m_ThreadPool.join_all();
     }
 
-    void client::send_message(const std::string& string)
+    void client::send_message(const std::wstring& string)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::CHAT_MESSAGE;
-        packet << string;
+        wide_string message;
+        message.from_wstring(string);
+
+        decoder::construct_packet(m_WriteBuffer, packet_type::CHAT_MESSAGE, &message);
+
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_message_sent, this, std::placeholders::_1));
     }
     void client::on_message_sent(const error_code& ec)
     {
         if (ec)
         {
-            std::cout << "Could not send the message! Reason: " << ec.message() << std::endl;
+            std::wcout << L"Could not send the message! Reason: " << ec.message().c_str() << std::endl;
         }
     }
 
@@ -145,16 +133,16 @@ namespace Chatty {
         switch (decoded.packet_type())
         {
         case packet_type::BEGIN_SESSION:
-            std::cout << decoded.message().data() << " wants to begin a session" << std::endl;
+            std::wcout << decoded.message() << L" wants to begin a session" << std::endl;
             break;
         case packet_type::CHAT_MESSAGE:
-            std::cout << decoded.message().data() << std::endl;
+            std::wcout << decoded.message() << std::endl;
             break;
         case packet_type::ACCEPT:
-            std::cout << "Session accepted!" << std::endl;
+            std::wcout << L"Session accepted!" << std::endl;
             break;
         case packet_type::REJECT:
-            std::cout << "Session rejected!" << std::endl;
+            std::wcout << L"Session rejected!" << std::endl;
             break;
         }
 
@@ -166,12 +154,13 @@ namespace Chatty {
         );
     }
 
-    void client::registration(const std::string& name)
+    void client::registration(const std::wstring& name)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::USER_REGISTER;
-        packet << name;
+        wide_string wide_name;
+        wide_name.from_wstring(name);
+
+        decoder::construct_packet(m_WriteBuffer, packet_type::USER_REGISTER, &wide_name);
+
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_registered, this, std::placeholders::_1));
     }
 
@@ -179,20 +168,21 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Registration failed! Reason: " << ec.message() << std::endl;
+            std::wcout << L"Registration failed! Reason: " << ec.message().c_str() << std::endl;
         }
         else
         {
-            std::cout << "Successfully registered on the server!" << std::endl;
+            std::wcout << L"Successfully registered on the server!" << std::endl;
         }
     }
 
-    void client::begin_session_with(const std::string& name)
+    void client::begin_session_with(const std::wstring& name)
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::BEGIN_SESSION;
-        packet << name;
+        wide_string wide_name;
+        wide_name.from_wstring(name);
+
+        decoder::construct_packet(m_WriteBuffer, packet_type::BEGIN_SESSION, &wide_name);
+
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_begun, this, std::placeholders::_1));
     }
 
@@ -200,19 +190,18 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Could not begin session! Reason: " << ec.message() << std::endl;
+            std::wcout << L"Could not begin session! Reason: " << ec.message().c_str() << std::endl;
         }
         else
         {
-            std::cout << "Successfully sent a session begin request!" << std::endl;
+            std::wcout << L"Successfully sent a session begin request!" << std::endl;
         }
     }
 
     void client::session_accept()
     {
-        m_WriteBuffer.consume(m_WriteBuffer.size() + 1);
-        std::ostream packet(&m_WriteBuffer);
-        packet << packet_type::ACCEPT;
+        decoder::construct_packet(m_WriteBuffer, packet_type::ACCEPT);
+
         async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_accepted, this, std::placeholders::_1));
     }
 
@@ -220,11 +209,11 @@ namespace Chatty {
     {
         if (ec)
         {
-            std::cout << "Could not accept session! Reason: " << ec.message() << std::endl;
+            std::wcout << L"Could not accept session! Reason: " << ec.message().c_str() << std::endl;
         }
         else
         {
-            std::cout << "Successfully sent a session accepted request!" << std::endl;
+            std::wcout << L"Successfully sent a session accepted request!" << std::endl;
         }
     }
 

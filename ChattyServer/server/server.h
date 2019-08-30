@@ -32,10 +32,10 @@ namespace Chatty {
         void accept_clients();
         void on_accepted(const error_code& ec);
 
-        void forward_message(string&& message, uint32_t to);
+        void forward_message(wide_string& message, uint32_t to);
 
-        uint32_t name_to_id(const string& name);
-        string   id_to_name(uint32_t id);
+        uint32_t name_to_id(const wide_string& name);
+        wide_string id_to_name(uint32_t id);
 
         void init_session(uint32_t from, uint32_t with);
 

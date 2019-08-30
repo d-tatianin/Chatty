@@ -5,9 +5,12 @@
 
 #include <functional>
 
-#include "decoder/decoder.h"
+#include "core/strings/wide_string.h"
+#include "core/strings/encoded_wide_string.h"
 
 namespace Chatty {
+
+    namespace packet_type { enum id; }
 
     typedef boost::asio::io_service
         ios;
@@ -33,9 +36,9 @@ namespace Chatty {
         mutable_buffer;
     typedef std::vector<char>
         string;
-    typedef std::function<void(string&&, uint32_t)>
+    typedef std::function<void(wide_string&, uint32_t)>
         forward_handler;
-    typedef std::function<uint32_t(const string&)>
+    typedef std::function<uint32_t(const wide_string&)>
         resolve_id_handler;
     typedef std::function<void(uint32_t, uint32_t)>
         init_session_handler;

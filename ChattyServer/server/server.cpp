@@ -22,19 +22,19 @@ namespace Chatty {
     void server::run()
     {
         m_SharedIOS->post(std::bind(&server::accept_clients, this));
-        std::cout << "Server is live!" << std::endl;
+        std::wcout << L"Server is live!" << std::endl;
 
         while (m_Running)
         {
-            std::string command;
-            std::cin >> command;
+            std::wstring command;
+            std::wcin >> command;
             
-            if (command == "shutdown")
+            if (command == L"shutdown")
                 shutdown();
-            else if (command == "clrscr" || command == "clear" || command == "cls")
+            else if (command == L"clrscr" || command == L"clear" || command == L"cls")
                 CLEAR_SCREEN;
             else
-                std::cout << "Unknown command!" << std::endl;
+                std::wcout << L"Unknown command!" << std::endl;
         }
 
         m_ThreadPool.join_all();
@@ -53,7 +53,7 @@ namespace Chatty {
         
         if (m_Running)
         {
-            std::cout << "A new client has just joined the server!" << std::endl;
+            std::wcout << L"A new client has just joined the server!" << std::endl;
 
             m_ActiveClients.emplace_back(
                 m_SharedIOS, 
@@ -89,14 +89,14 @@ namespace Chatty {
         }
     }
 
-    void server::forward_message(string&& message, uint32_t to)
+    void server::forward_message(wide_string& message, uint32_t to)
     {
            auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == to; });
 
-           recipient->send_to(std::forward<string&&>(message));
+           recipient->send_to(message);
     }
 
-    uint32_t server::name_to_id(const string& name)
+    uint32_t server::name_to_id(const wide_string& name)
     {
         auto client_itr = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [&](client& c) { return c.name() == name; });
 
@@ -108,7 +108,7 @@ namespace Chatty {
         return 0;
     }
 
-    string server::id_to_name(uint32_t id)
+    wide_string server::id_to_name(uint32_t id)
     {
         auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == id; });
 
@@ -137,7 +137,7 @@ namespace Chatty {
 
     void server::shutdown()
     {
-        std::cout << "Server shutting down..." << std::endl;
+        std::wcout << "Server shutting down..." << std::endl;
         m_Running = false;
         m_Work.reset();
         m_Acceptor.cancel();

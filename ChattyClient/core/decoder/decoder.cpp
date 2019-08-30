@@ -2,24 +2,15 @@
 
 namespace Chatty {
 
-    decoder::decoder(const std::istream& stream)
+    decoder::decoder(std::istream& stream)
     {
-        std::stringstream ss;
-        ss << stream.rdbuf();
-        std::string packet = ss.str();
-        
-        if (isalnum(packet[0]))
-        {
-            m_PacketType = static_cast<packet_type::id>(packet[0] - '0');
-        }
-        else
+        m_PacketType = static_cast<packet_type::id>(stream.get() - '0');
+
+        if (!validate(m_PacketType))
         {
             m_PacketType = packet_type::BAD_PACKET;
             return;
         }
-
-        packet.erase(0, 1);
-        packet.push_back('\0');
 
         switch (m_PacketType)
         {
@@ -27,9 +18,30 @@ namespace Chatty {
         case packet_type::BEGIN_SESSION:
         case packet_type::CHAT_MESSAGE:
         case packet_type::CLOSE_SESSION:
-            m_Message = std::vector<char>(packet.begin(), packet.end());
+            m_Message.decode_from(stream);
         default:
             break;
         }
+    }
+
+    void decoder::construct_packet(
+        buffer& out_buffer,
+        packet_type::id type,
+        wide_string* message
+    )
+    {
+        out_buffer.consume(out_buffer.size() + 1);
+
+        std::ostream writer(&out_buffer);
+
+        writer << type;
+
+        if (message)
+        {
+            encoded_wide_string ewstr;
+            ewstr.encode_from(*message);
+            ewstr.copy_to(writer);
+        }
+        
     }
 }

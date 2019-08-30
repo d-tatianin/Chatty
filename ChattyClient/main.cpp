@@ -2,8 +2,15 @@
 
 #include "client/client.h"
 
+#include <io.h>
+#include <fcntl.h>
+
 int main(int argc, char** argv)
 {
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stderr), _O_U16TEXT);
+
     unsigned short serverPort = 0;
     Chatty::string_pair ip_port;
 

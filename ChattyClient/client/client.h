@@ -24,10 +24,10 @@ namespace Chatty {
         void connect();
         void on_connected(const error_code& ec);
 
-        void registration(const std::string& name);
+        void registration(const std::wstring& name);
         void on_registered(const error_code& ec);
         
-        void begin_session_with(const std::string& name);
+        void begin_session_with(const std::wstring& name);
         void on_session_begun(const error_code& ec);
 
         void session_accept();
@@ -36,7 +36,7 @@ namespace Chatty {
         void read();
         void on_read(const error_code& ec, size_t bytes_written);
 
-        void send_message(const std::string& string);
+        void send_message(const std::wstring& string);
         void on_message_sent(const error_code& ec);
 
         void workerThread(Shared<ios> ios);

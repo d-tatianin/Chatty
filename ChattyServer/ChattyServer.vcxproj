@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EFD0B9A3-1848-4446-9E95-2087DD06FA90}</ProjectGuid>
     <RootNamespace>ChattyServer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -123,11 +123,15 @@
     <ClInclude Include="core\chatty_defines.h" />
     <ClInclude Include="core\chatty_utils.h" />
     <ClInclude Include="core\decoder\decoder.h" />
+    <ClInclude Include="core\strings\encoded_wide_string.h" />
+    <ClInclude Include="core\strings\wide_string.h" />
     <ClInclude Include="server\client.h" />
     <ClInclude Include="server\server.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\decoder\decoder.cpp" />
+    <ClCompile Include="core\strings\encoded_wide_string.cpp" />
+    <ClCompile Include="core\strings\wide_string.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="server\client.cpp" />
     <ClCompile Include="server\server.cpp" />
