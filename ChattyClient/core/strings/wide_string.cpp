@@ -1,6 +1,8 @@
 #include "encoded_wide_string.h"
 #include "wide_string.h"
 
+#include "core/chatty_defines.h"
+
 void wide_string::decode_from(const encoded_wide_string& encoded_str)
 {
     m_Buffer.resize(encoded_str.size() + 1);
@@ -11,7 +13,7 @@ void wide_string::decode_from(const encoded_wide_string& encoded_str)
 
 void wide_string::decode_from(std::istream& byte_stream)
 {
-    m_Buffer.resize(128); // TODO: make a constant max size
+    m_Buffer.resize(CHATTY_MESSAGE_SIZE);
 
     char tempo[4];
 

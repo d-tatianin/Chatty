@@ -4,7 +4,7 @@ namespace Chatty {
 
     decoder::decoder(std::istream& stream)
     {
-        m_PacketType = static_cast<packet_type::id>(stream.get() - '0');
+        m_PacketType = static_cast<packet_type::id>(stream.get());
 
         if (!validate(m_PacketType))
         {
@@ -34,7 +34,7 @@ namespace Chatty {
 
         std::ostream writer(&out_buffer);
 
-        writer << type;
+        writer << static_cast<char>(type);
 
         if (message)
         {

@@ -2,6 +2,8 @@
 
 #include <boost/asio.hpp>
 
+#include "core/chatty_defines.h"
+
 #include "client.h"
 
 
@@ -91,6 +93,7 @@ namespace Chatty {
             }
             else if (command == L"/clear")
             {
+                CLEAR_SCREEN;
             }
             else
             {
