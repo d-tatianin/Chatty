@@ -2,9 +2,16 @@
 
 #ifdef _WIN32
     #include <Windows.h>
-    #define CLEAR_SCREEN system("cls")
+    inline void clear_screen()
+    {
+        system("cls");
+    }
 #else
-    #define CLEAR_SCREEN printf("\033c");
+    #include <stdio.h>
+    inline void clear_screen()
+    {
+        printf("\033c");
+    }
 #endif
 
 #define CHATTY_BUFFER_SIZE (1024 * 10) // 10KB

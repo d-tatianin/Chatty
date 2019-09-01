@@ -50,5 +50,8 @@
     <ClInclude Include="core\strings\encoded_wide_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\chatty_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

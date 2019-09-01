@@ -93,7 +93,7 @@ namespace Chatty {
             }
             else if (command == L"/clear")
             {
-                CLEAR_SCREEN;
+                clear_screen();
             }
             else
             {

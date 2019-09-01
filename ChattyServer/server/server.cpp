@@ -32,7 +32,7 @@ namespace Chatty {
             if (command == L"shutdown")
                 shutdown();
             else if (command == L"clrscr" || command == L"clear" || command == L"cls")
-                CLEAR_SCREEN;
+                clear_screen();
             else
                 std::wcout << L"Unknown command!" << std::endl;
         }
