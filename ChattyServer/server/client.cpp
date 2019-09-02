@@ -77,9 +77,21 @@ namespace Chatty {
 
     void client::send_to(wide_string& message)
     {
-        decoder::construct_packet(m_WriteBuffer, packet_type::CHAT_MESSAGE, &message);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::CHAT_MESSAGE, 
+            &message
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_sent, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_sent(const error_code& ec)
@@ -87,15 +99,35 @@ namespace Chatty {
         if (ec)
         {
             std::wcout << L"Error while sending a message to the client!" << std::endl;
-            async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_sent, this, std::placeholders::_1));
+            async_write(
+                m_Socket, 
+                m_WriteBuffer, 
+                std::bind(
+                    &client::on_sent, 
+                    this, 
+                    std::placeholders::_1
+                )
+            );
         }
     }
 
     void client::request_session(uint32_t from)
     {
-        decoder::construct_packet(m_WriteBuffer, packet_type::BEGIN_SESSION, &m_TalkingToName);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::BEGIN_SESSION, 
+            &m_TalkingToName
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_requested, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_session_requested, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_session_requested(const error_code& ec)
@@ -113,7 +145,15 @@ namespace Chatty {
         if (reply == packet_type::ACCEPT)
             m_ActiveSession = true;
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_reply_sent, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_session_reply_sent, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_session_reply_sent(const error_code& ec)

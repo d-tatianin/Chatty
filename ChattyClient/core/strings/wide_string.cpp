@@ -21,7 +21,8 @@ void wide_string::decode_from(std::istream& byte_stream)
 
     while (byte_stream.readsome(tempo, 4) >= 4)
     {
-        m_Buffer[chars_written] = static_cast<wchar_t>(*reinterpret_cast<uint32_t*>(tempo));
+        m_Buffer[chars_written] = 
+            static_cast<wchar_t>(*reinterpret_cast<uint32_t*>(tempo));
 
         ++chars_written;
     }

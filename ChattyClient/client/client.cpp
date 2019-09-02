@@ -18,7 +18,13 @@ namespace Chatty {
         m_InSession(false)
     {
         for (size_t i = 0; i < std::thread::hardware_concurrency(); i++)
-            m_ThreadPool.create_thread(std::bind(&client::workerThread, this, m_SharedIOS));
+            m_ThreadPool.create_thread(
+                std::bind(
+                    &client::workerThread, 
+                    this, 
+                    m_SharedIOS
+                )
+            );
 
         m_SharedIOS->post(
             std::bind(
@@ -74,12 +80,24 @@ namespace Chatty {
                 shutdown();
             else if (command.find(L"/register") != std::string::npos)
             {
-                command.erase(command.begin(), std::find(command.begin(), command.end(), L' ') + 1);
+                command.erase(
+                    command.begin(), 
+                    std::find(
+                        command.begin(), 
+                        command.end(), L' ') + 1
+                );
+
                 registration(command);
             }
             else if (command.find(L"/begin-session") != std::string::npos)
             {
-                command.erase(command.begin(), std::find(command.begin(), command.end(), L' ') + 1);
+                command.erase(
+                    command.begin(), 
+                    std::find(
+                        command.begin(), 
+                        command.end(), L' ') + 1
+                );
+
                 begin_session_with(command);
             }
             else if (command == L"/accept")
@@ -109,9 +127,21 @@ namespace Chatty {
         wide_string message;
         message.from_wstring(string);
 
-        decoder::construct_packet(m_WriteBuffer, packet_type::CHAT_MESSAGE, &message);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::CHAT_MESSAGE, 
+            &message
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_message_sent, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_message_sent, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
     void client::on_message_sent(const error_code& ec)
     {
@@ -124,7 +154,15 @@ namespace Chatty {
     void client::read()
     {
         m_ReadBuffer.consume(m_ReadBuffer.size() + 1);
-        m_Socket.async_read_some(m_ReadBuffer.prepare(256), std::bind(&client::on_read, this, std::placeholders::_1, std::placeholders::_2));
+        m_Socket.async_read_some(
+            m_ReadBuffer.prepare(CHATTY_MESSAGE_SIZE), 
+            std::bind(
+                &client::on_read, 
+                this, 
+                std::placeholders::_1, 
+                std::placeholders::_2
+            )
+        );
     }
 
     void client::on_read(const error_code& rc, size_t bytes_written)
@@ -162,9 +200,21 @@ namespace Chatty {
         wide_string wide_name;
         wide_name.from_wstring(name);
 
-        decoder::construct_packet(m_WriteBuffer, packet_type::USER_REGISTER, &wide_name);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::USER_REGISTER, 
+            &wide_name
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_registered, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_registered, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_registered(const error_code& ec)
@@ -184,9 +234,21 @@ namespace Chatty {
         wide_string wide_name;
         wide_name.from_wstring(name);
 
-        decoder::construct_packet(m_WriteBuffer, packet_type::BEGIN_SESSION, &wide_name);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::BEGIN_SESSION, 
+            &wide_name
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_begun, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_session_begun, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_session_begun(const error_code& ec)
@@ -203,9 +265,20 @@ namespace Chatty {
 
     void client::session_accept()
     {
-        decoder::construct_packet(m_WriteBuffer, packet_type::ACCEPT);
+        decoder::construct_packet(
+            m_WriteBuffer, 
+            packet_type::ACCEPT
+        );
 
-        async_write(m_Socket, m_WriteBuffer, std::bind(&client::on_session_accepted, this, std::placeholders::_1));
+        async_write(
+            m_Socket, 
+            m_WriteBuffer, 
+            std::bind(
+                &client::on_session_accepted, 
+                this, 
+                std::placeholders::_1
+            )
+        );
     }
 
     void client::on_session_accepted(const error_code& ec)

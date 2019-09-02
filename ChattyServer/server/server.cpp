@@ -16,7 +16,13 @@ namespace Chatty {
         m_Running(true)
     {
         for (size_t i = 0; i < std::thread::hardware_concurrency(); i++)
-            m_ThreadPool.create_thread(std::bind(&server::workerThread, this, m_SharedIOS));
+            m_ThreadPool.create_thread(
+                std::bind(
+                    &server::workerThread, 
+                    this, 
+                    m_SharedIOS
+                )
+            );
     }
 
     void server::run()
@@ -43,7 +49,11 @@ namespace Chatty {
     void server::accept_clients()
     {
         m_Acceptor.async_accept(m_Socket, 
-            std::bind(&server::on_accepted, this, std::placeholders::_1)
+            std::bind(
+                &server::on_accepted, 
+                this, 
+                std::placeholders::_1
+            )
         );
     }
 
@@ -85,20 +95,33 @@ namespace Chatty {
             );
 
             if (m_Running)
-                m_SharedIOS->post(std::bind(&server::accept_clients, this));
+                m_SharedIOS->post(
+                    std::bind(
+                        &server::accept_clients, 
+                        this
+                    )
+                );
         }
     }
 
     void server::forward_message(wide_string& message, uint32_t to)
     {
-           auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == to; });
+           auto recipient = 
+               std::find_if(
+                   m_ActiveClients.begin(), 
+                   m_ActiveClients.end(), 
+                   [=](client& c) { return c.id() == to; });
 
            recipient->send_to(message);
     }
 
     uint32_t server::name_to_id(const wide_string& name)
     {
-        auto client_itr = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [&](client& c) { return c.name() == name; });
+        auto client_itr = 
+            std::find_if(
+                m_ActiveClients.begin(), 
+                m_ActiveClients.end(), 
+                [&](client& c) { return c.name() == name; });
 
         if (client_itr != m_ActiveClients.end())
         {
@@ -110,14 +133,22 @@ namespace Chatty {
 
     wide_string server::id_to_name(uint32_t id)
     {
-        auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == id; });
+        auto recipient = 
+            std::find_if(
+                m_ActiveClients.begin(), 
+                m_ActiveClients.end(), 
+                [=](client& c) { return c.id() == id; });
 
         return recipient->name();
     }
 
     void server::init_session(uint32_t from, uint32_t with)
     {
-        auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == with; });
+        auto recipient = 
+            std::find_if(
+                m_ActiveClients.begin(), 
+                m_ActiveClients.end(), 
+                [=](client& c) { return c.id() == with; });
 
         recipient->set_chatter(from);
         recipient->set_chatter_name(id_to_name(from));
@@ -126,7 +157,12 @@ namespace Chatty {
 
     void server::init_session_reply(packet_type::id reply, uint32_t to)
     {
-        auto recipient = std::find_if(m_ActiveClients.begin(), m_ActiveClients.end(), [=](client& c) { return c.id() == to; });
+        auto recipient = 
+            std::find_if(
+                m_ActiveClients.begin(), 
+                m_ActiveClients.end(), 
+                [=](client& c) { return c.id() == to; });
+
         recipient->session_reply(reply);
     }
 
